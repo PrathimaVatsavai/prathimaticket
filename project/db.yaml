@@ -1,0 +1,41 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "prathimaticket"
+  namespace: "default"
+  labels:
+    app: "prathimaticket"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "prathimaticket"
+  template:
+    metadata:
+      labels:
+        app: "prathimaticket"
+    spec:
+      containers:
+      - name: "prathimaticket-sha256-1"
+        image: "gcr.io/cap1-339903/github.com/prathimavatsavai/prathimaticket@sha256:3ac96a0b60930122a6b8277c84f5c8891cbcc5cf35bc3e894d0a523f22502168"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "prathimaticket-hpa-ejsa"
+  namespace: "default"
+  labels:
+    app: "prathimaticket"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "prathimaticket"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
